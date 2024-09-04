@@ -1,0 +1,99 @@
+services:
+
+  #PHP App
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/dockerfile
+    image: techUsher/php_app
+    container_name: php_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./code/:/var/www
+      - ./config/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx Service
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/dockerfile
+    image: techUsher/nginx
+    container_name: nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./code/:/var/www
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./config/nginx/ssl:/etc/nginx/ssl
+    networks:
+      - app-network
+
+#MySQL 5.7.44 Service
+  mysql_5.7.44:
+    image: mysql:5.7.44
+    container_name: db_mysql_5.7.44
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3305:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql_5.7.44
+    volumes:
+      - ./db/5.7.44/dbdata:/var/lib/mysql/
+      - ./config/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+#MySQL 8.0.37 Service
+  mysql_8.0.37:
+    image: mysql:8.0.37
+    container_name: db_mysql_8.0.37
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql_8.0.37
+    volumes:
+      - ./db/8.0.37/dbdata:/var/lib/mysql/
+      - ./config/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+
+  redis:
+      image: redis:6.2-alpine
+      restart: always
+      ports:
+        - '6379:6379'
+      command: redis-server --save 60 1 --loglevel warning
+      volumes: 
+        - ./db/redis/data:/data
+      networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network: 
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
