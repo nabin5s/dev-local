@@ -1,3 +1,4 @@
 /code/*
+!/code/index.php
 /db/*
 /.idea

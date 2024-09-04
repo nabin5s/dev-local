@@ -21,7 +21,7 @@ services:
       - app-network
 
   #Nginx Service
-  nginx:
+  nginx_server:
     build:
       context: .
       dockerfile: docker/nginx/dockerfile
