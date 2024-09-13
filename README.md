@@ -1,8 +1,9 @@
 <strong>Steps to get your local development environment:</strong>
 
 * `git clone https://github.com/nabin5s/dev-local.git`
-* `cd dev-local/`
-* `docker-compose up -d`
+* Navigate to the cloned directory `cd dev-local/`
+* Build image `docker-compose build --no-cache --pull`
+* Start docker services `docker-compose up -d`
 * Visit `localhost` to run code from `/code/` directory.
 
 Adding local domains:
