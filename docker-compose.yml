@@ -1,17 +1,17 @@
 services:
 
-  #PHP App
-  app:
+  #PHP7 App
+  php7_app:
     build:
       context: .
-      dockerfile: docker/php/dockerfile
-    image: techUsher/php_app
-    container_name: php_app
+      dockerfile: docker/php7/dockerfile
+    image: techUsher/php7_app
+    container_name: php7_app
     restart: unless-stopped
     tty: true
     environment:
-      SERVICE_NAME: app
-      SERVICE_TAGS: dev
+      SERVICE_NAME: php7_app
+      SERVICE_TAGS: php7_dev
     working_dir: /var/www
     volumes:
       - ./code/:/var/www
@@ -20,6 +20,25 @@ services:
     networks:
       - app-network
 
+  #PHP8 App
+  php8_app:
+    build:
+      context: .
+      dockerfile: docker/php8/dockerfile
+    image: techUsher/php8_app
+    container_name: php8_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: php8_app
+      SERVICE_TAGS: php8_dev
+    working_dir: /var/www
+    volumes:
+      - ./code/:/var/www
+      - ./config/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./config/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
   #Nginx Service
   nginx_server:
     build:
